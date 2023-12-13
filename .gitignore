@@ -1,0 +1,6 @@
+.DS_Store
+
+## User settings
+xcuserdata/
+
+.swiftpm/
