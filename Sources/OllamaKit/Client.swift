@@ -11,8 +11,11 @@ public final class OllamaClient {
     // Generate
     
     public func generate(_ payload: GenerateRequest) async throws -> GenerateResponse {
+        var body = payload
+        body.stream = false
+        
         var req = makeRequest(path: "generate", method: "POST")
-        req.httpBody = try JSONEncoder().encode(payload)
+        req.httpBody = try JSONEncoder().encode(body)
         
         let (data, resp) = try await URLSession.shared.data(for: req)
         if let httpResponse = resp as? HTTPURLResponse, httpResponse.statusCode != 200 {
@@ -22,16 +25,17 @@ public final class OllamaClient {
     }
     
     public func generateStream(_ payload: GenerateRequest) -> AsyncThrowingStream<GenerateResponse, Error> {
-        var body = payload
-        body.stream = true
-        return makeAsyncRequest(path: "generate", method: "POST", body: body)
+        makeAsyncRequest(path: "generate", method: "POST", body: payload)
     }
     
     // Chats
     
     public func chat(_ payload: ChatRequest) async throws -> ChatResponse {
+        var body = payload
+        body.stream = false
+        
         var req = makeRequest(path: "chat", method: "POST")
-        req.httpBody = try JSONEncoder().encode(payload)
+        req.httpBody = try JSONEncoder().encode(body)
         
         let (data, resp) = try await URLSession.shared.data(for: req)
         if let httpResponse = resp as? HTTPURLResponse, httpResponse.statusCode != 200 {
@@ -41,9 +45,7 @@ public final class OllamaClient {
     }
     
     public func chatStream(_ payload: ChatRequest) -> AsyncThrowingStream<ChatResponse, Error> {
-        var body = payload
-        body.stream = true
-        return makeAsyncRequest(path: "chat", method: "POST", body: body)
+        makeAsyncRequest(path: "chat", method: "POST", body: payload)
     }
     
     // Models
