@@ -4,8 +4,8 @@ public final class OllamaClient {
     
     let host: URL
     
-    public init(host: String = "127.0.0.1:8080") {
-        self.host = URL(string: "http://\(host)/api")!
+    public init(host: String = "http://127.0.0.1:8080") {
+        self.host = URL(string: "\(host)/api")!
     }
     
     // Generate
