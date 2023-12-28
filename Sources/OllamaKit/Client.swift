@@ -50,7 +50,7 @@ public final class OllamaClient {
     
     // Models
     
-    public func modelList() async throws -> ModelListResponse {
+    public func models() async throws -> ModelListResponse {
         let req = makeRequest(path: "tags", method: "GET")
         let (data, resp) = try await URLSession.shared.data(for: req)
         if let httpResponse = resp as? HTTPURLResponse, httpResponse.statusCode != 200 {
@@ -59,7 +59,7 @@ public final class OllamaClient {
         return try decoder.decode(ModelListResponse.self, from: data)
     }
     
-    public func modelShow(_ payload: ModelShowRequest) async throws -> ModelShowResponse {
+    public func model(_ payload: ModelShowRequest) async throws -> ModelShowResponse {
         var req = makeRequest(path: "show", method: "POST")
         req.httpBody = try JSONEncoder().encode(payload)
         
