@@ -127,38 +127,21 @@ public final class OllamaClient {
     }
     
     private func makeAsyncRequest<Body: Codable, Response: Codable>(path: String, method: String, body: Body) -> AsyncThrowingStream<Response, Error> {
+        var request = makeRequest(path: path, method: method)
+        request.httpBody = try? JSONEncoder().encode(body)
+        
         return AsyncThrowingStream { continuation in
-            var buffer = Data()
-            
-            var req = makeRequest(path: path, method: method)
-            req.httpBody = try? JSONEncoder().encode(body)
-            
-            let task = URLSession.shared.dataTask(with: req) { (data, response, error) in
-                if let data = data {
-                    buffer.append(data)
-                    
-                    while let range = buffer.range(of: "\n".data(using: .utf8)!) {
-                        let lineData = buffer[..<range.lowerBound]
-                        do {
-                            let item = try self.decoder.decode(Response.self, from: lineData)
-                            continuation.yield(item)
-                        } catch {
-                            continuation.finish(throwing: error)
-                            return
-                        }
-                        buffer.removeSubrange(..<range.upperBound)
-                    }
-                }
-                if let error = error {
-                    continuation.finish(throwing: error)
-                    return
-                }
+            let session = StreamingSession<Response>(urlRequest: request)
+            session.onReceiveContent = {_, object in
+                continuation.yield(object)
             }
-            task.resume()
-            
-            continuation.onTermination = { @Sendable _ in
-                task.cancel()
+            session.onProcessingError = {_, error in
+                continuation.finish(throwing: error)
             }
+            session.onComplete = { object, error in
+                continuation.finish(throwing: error)
+            }
+            session.perform()
         }
     }
     
