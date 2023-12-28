@@ -40,8 +40,6 @@ final class StreamingSession<ResultType: Codable>: NSObject, Identifiable, URLSe
             onProcessingError?(self, StreamingError.unknownContent)
             return
         }
-        print(stringContent)
-        
         let jsonObjects = stringContent
             .components(separatedBy: "\n")
             .filter { $0.isEmpty == false }
