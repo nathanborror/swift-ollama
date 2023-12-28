@@ -127,8 +127,9 @@ public final class OllamaClient {
     }
     
     private func makeAsyncRequest<Body: Codable, Response: Codable>(path: String, method: String, body: Body) -> AsyncThrowingStream<Response, Error> {
-        var buffer = Data()
         return AsyncThrowingStream { continuation in
+            var buffer = Data()
+            
             var req = makeRequest(path: path, method: method)
             req.httpBody = try? JSONEncoder().encode(body)
             
@@ -152,7 +153,6 @@ public final class OllamaClient {
                     continuation.finish(throwing: error)
                     return
                 }
-                continuation.finish()
             }
             task.resume()
             
