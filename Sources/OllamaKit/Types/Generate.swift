@@ -1,4 +1,5 @@
 import Foundation
+import SharedKit
 
 public struct GenerateRequest: Codable {
     public var model: String
@@ -10,7 +11,8 @@ public struct GenerateRequest: Codable {
     public var stream: Bool
     public var options: [String: AnyValue]?
     
-    public init(model: String, prompt: String, format: String? = nil, system: String? = nil, template: String? = nil, context: [Int]? = nil, stream: Bool = true, options: [String : AnyValue]? = nil) {
+    public init(model: String, prompt: String, format: String? = nil, system: String? = nil, template: String? = nil, 
+                context: [Int]? = nil, stream: Bool = true, options: [String : AnyValue]? = nil) {
         self.model = model
         self.prompt = prompt
         self.system = system

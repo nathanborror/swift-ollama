@@ -1,4 +1,5 @@
 import Foundation
+import SharedKit
 
 public struct EmbeddingRequest: Codable {
     public var model: String
