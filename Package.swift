@@ -15,11 +15,11 @@ let package = Package(
         .library(name: "Ollama", targets: ["Ollama"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/nathanborror/swift-shared-kit", branch: "main"),
+        .package(url: "https://github.com/nathanborror/swift-sharedkit", branch: "main"),
     ],
     targets: [
         .target(name: "Ollama", dependencies: [
-            .product(name: "SharedKit", package: "swift-shared-kit"),
+            .product(name: "SharedKit", package: "swift-sharedkit"),
         ]),
         .testTarget(name: "OllamaTests", dependencies: ["Ollama"]),
     ]
