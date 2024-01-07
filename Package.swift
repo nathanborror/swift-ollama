@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "OllamaKit",
+    name: "swift-ollama",
     platforms: [
         .iOS(.v16),
         .macOS(.v13),
@@ -12,15 +12,15 @@ let package = Package(
         .tvOS(.v16),
     ],
     products: [
-        .library(name: "OllamaKit", targets: ["OllamaKit"]),
+        .library(name: "Ollama", targets: ["Ollama"]),
     ],
     dependencies: [
         .package(url: "https://github.com/nathanborror/SharedKit", branch: "main"),
     ],
     targets: [
-        .target(name: "OllamaKit", dependencies: [
+        .target(name: "Ollama", dependencies: [
             .product(name: "SharedKit", package: "SharedKit"),
         ]),
-        .testTarget(name: "OllamaKitTests", dependencies: ["OllamaKit"]),
+        .testTarget(name: "OllamaTests", dependencies: ["Ollama"]),
     ]
 )

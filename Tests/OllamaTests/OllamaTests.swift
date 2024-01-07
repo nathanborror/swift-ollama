@@ -1,7 +1,7 @@
 import XCTest
-@testable import OllamaKit
+@testable import Ollama
 
-final class OllamaKitTests: XCTestCase {
+final class OllamaTests: XCTestCase {
     func testExample() throws {
         // XCTest Documentation
         // https://developer.apple.com/documentation/xctest
