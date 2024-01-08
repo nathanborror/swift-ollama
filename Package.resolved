@@ -1,12 +1,12 @@
 {
   "pins" : [
     {
-      "identity" : "swift-sharedkit",
+      "identity" : "swift-shared-kit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nathanborror/swift-sharedkit",
+      "location" : "https://github.com/nathanborror/swift-shared-kit",
       "state" : {
         "branch" : "main",
-        "revision" : "4e5fbdea2b1b68385605c753c937c9438f30f7a9"
+        "revision" : "0ec91e139cf30b6a65dba6fbda61eac0454ea579"
       }
     }
   ],
