@@ -2,10 +2,18 @@ import Foundation
 
 public final class OllamaClient {
     
-    let host: URL
+    public struct Configuration {
+        public let host: URL
+        
+        init(host: URL = URL(string: "http://127.0.0.1:8080/api")!) {
+            self.host = host
+        }
+    }
     
-    public init(url: URL) {
-        self.host = url.appending(path: "api")
+    public let configuration: Configuration
+    
+    public init(configuration: Configuration) {
+        self.configuration = configuration
     }
     
     // Generate
@@ -120,7 +128,7 @@ public final class OllamaClient {
     // Private
     
     private func makeRequest(path: String, method: String) -> URLRequest {
-        var req = URLRequest(url: host.appending(path: path))
+        var req = URLRequest(url: configuration.host.appending(path: path))
         req.httpMethod = method
         req.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         return req
