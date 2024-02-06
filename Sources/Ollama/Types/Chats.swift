@@ -44,13 +44,15 @@ public struct ChatResponse: Codable {
 public struct Message: Codable {
     public var role: Role
     public var content: String
+    public var images: [Data]?
     
     public enum Role: String, Codable {
         case system, assistant, user
     }
     
-    public init(role: Role, content: String) {
+    public init(role: Role, content: String, images: [Data]? = nil) {
         self.role = role
         self.content = content
+        self.images = images
     }
 }
