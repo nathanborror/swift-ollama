@@ -5,8 +5,8 @@ public final class OllamaClient {
     public struct Configuration {
         public let host: URL
         
-        public init(host: URL = URL(string: "http://127.0.0.1:8080/api")!) {
-            self.host = host
+        public init(host: URL? = nil) {
+            self.host = host ?? Defaults.apiHost
         }
     }
     
