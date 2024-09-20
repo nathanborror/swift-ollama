@@ -6,8 +6,38 @@ public struct ModelListResponse: Codable {
 
 public struct ModelResponse: Codable {
     public let name: String
+    public let model: String
+    public let modified: Date
     public let size: Int64
     public let digest: String
+    public let details: Details?
+    
+    public struct Details: Codable {
+        public let parent: String?
+        public let format: String
+        public let family: String
+        public let families: [String]?
+        public let parameterSize: String
+        public let quantizationLevel: String
+        
+        enum CodingKeys: String, CodingKey {
+            case parent = "parent_model"
+            case format
+            case family
+            case families
+            case parameterSize = "parameter_size"
+            case quantizationLevel = "quantization_level"
+        }
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case name
+        case model
+        case modified = "modified_at"
+        case size
+        case digest
+        case details
+    }
 }
 
 public struct ModelShowRequest: Codable {
