@@ -3,7 +3,7 @@
     {
       "identity" : "swift-shared-kit",
       "kind" : "remoteSourceControl",
-      "location" : "git@github.com:nathanborror/swift-shared-kit",
+      "location" : "https://github.com/nathanborror/swift-shared-kit",
       "state" : {
         "branch" : "main",
         "revision" : "323b63fccc9b6cf372e7b4dffda68d598ccf381f"
