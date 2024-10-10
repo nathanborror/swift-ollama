@@ -4,22 +4,44 @@ import SharedKit
 public struct GenerateRequest: Codable {
     public var model: String
     public var prompt: String
+    public var suffix: String?
     public var format: String?
+    public var options: [String: AnyValue]?
     public var system: String?
     public var template: String?
     public var context: [Int]?
     public var stream: Bool
-    public var options: [String: AnyValue]?
+    public var raw: Bool?
+    public var keepAlive: String?
     
-    public init(model: String, prompt: String, format: String? = nil, system: String? = nil, template: String? = nil, 
-                context: [Int]? = nil, stream: Bool = true, options: [String : AnyValue]? = nil) {
+    enum CodingKeys: String, CodingKey {
+        case model
+        case prompt
+        case suffix
+        case format
+        case options
+        case system
+        case template
+        case context
+        case stream
+        case raw
+        case keepAlive = "keep_alive"
+    }
+    
+    public init(model: String, prompt: String, suffix: String? = nil, format: String? = nil,
+                options: [String : AnyValue]? = nil, system: String? = nil, template: String? = nil,
+                context: [Int]? = nil, stream: Bool = true, raw: Bool? = nil, keepAlive: String? = nil) {
         self.model = model
         self.prompt = prompt
+        self.suffix = suffix
+        self.format = format
+        self.options = options
         self.system = system
         self.template = template
         self.context = context
         self.stream = stream
-        self.options = options
+        self.raw = raw
+        self.keepAlive = keepAlive
     }
 }
 
