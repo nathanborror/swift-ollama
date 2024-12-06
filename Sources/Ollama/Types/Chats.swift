@@ -8,79 +8,49 @@ public struct ChatRequest: Codable {
     public var format: String?
     public var options: [String: AnyValue]?
     public var stream: Bool?
-    public var keepAlive: Bool?
-    
-    enum CodingKeys: String, CodingKey {
-        case model
-        case messages
-        case tools
-        case format
-        case options
-        case stream
-        case keepAlive = "keep_alive"
-    }
-    
+    public var keep_alive: Bool?
+
     public init(model: String, messages: [Message], tools: [Tool]? = nil, format: String? = nil,
-                options: [String : AnyValue]? = nil, stream: Bool? = nil, keepAlive: Bool? = nil) {
+                options: [String : AnyValue]? = nil, stream: Bool? = nil, keep_alive: Bool? = nil) {
         self.model = model
         self.messages = messages
         self.tools = tools
         self.format = format
         self.options = options
         self.stream = stream
-        self.keepAlive = keepAlive
+        self.keep_alive = keep_alive
     }
 }
 
 public struct ChatResponse: Codable {
     public let model: String
-    public let createdAt: Date
+    public let created_at: Date
     public let message: Message?
     public let done: Bool?
     
-    public let totalDuration: Int?
-    public let loadDuration: Int?
-    public let promptEvalCount: Int?
-    public let promptEvalDuration: Int?
-    public let evalCount: Int?
-    public let evalDuration: Int?
-    
-    enum CodingKeys: String, CodingKey {
-        case model
-        case createdAt = "created_at"
-        case message
-        case done
-        case totalDuration = "total_duration"
-        case loadDuration = "load_duration"
-        case promptEvalCount = "prompt_eval_count"
-        case promptEvalDuration = "prompt_eval_duration"
-        case evalCount = "eval_count"
-        case evalDuration = "eval_duration"
-    }
+    public let total_duration: Int?
+    public let load_duration: Int?
+    public let prompt_eval_count: Int?
+    public let prompt_eval_duration: Int?
+    public let eval_count: Int?
+    public let eval_duration: Int?
 }
 
 public struct Message: Codable {
     public var role: Role
     public var content: String
     public var images: [Data]?
-    public var toolCalls: [ToolCall]?
-    
+    public var tool_calls: [ToolCall]?
+
     public enum Role: String, Codable {
         case system, assistant, user, tool
     }
-    
-    enum CodingKeys: String, CodingKey {
-        case role
-        case content
-        case images
-        case toolCalls = "tool_calls"
-    }
-    
-    public init(role: Role, content: String, images: [Data]? = nil, toolCalls: [ToolCall]? = nil) {
+
+    public init(role: Role, content: String, images: [Data]? = nil, tool_calls: [ToolCall]? = nil) {
         self.role = role
         self.content = content
         self.images = images
-        self.toolCalls = toolCalls
+        self.tool_calls = tool_calls
     }
 }
 

@@ -1,31 +1,23 @@
 import Foundation
 import SharedKit
 
-public struct EmbeddingRequest: Codable {
+public struct EmbeddingsRequest: Codable {
     public var model: String
     public var input: String
     public var truncate: Bool?
     public var options: [String: AnyValue]?
-    public var keepAlive: Bool?
-    
-    enum CodingKeys: String, CodingKey {
-        case model
-        case input
-        case truncate
-        case options
-        case keepAlive = "keep_alive"
-    }
-    
+    public var keep_alive: Bool?
+
     public init(model: String, input: String, truncate: Bool? = nil, options: [String : AnyValue]? = nil,
-                keepAlive: Bool? = nil) {
+                keep_alive: Bool? = nil) {
         self.model = model
         self.input = input
         self.truncate = truncate
         self.options = options
-        self.keepAlive = keepAlive
+        self.keep_alive = keep_alive
     }
 }
 
-public struct EmbeddingResponse: Codable {
+public struct EmbeddingsResponse: Codable {
     public let embedding: [Float64]
 }

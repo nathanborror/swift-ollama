@@ -1,144 +1,138 @@
 import Foundation
 import SharedKit
 
-public final class OllamaClient {
-    
-    public struct Configuration {
-        public let host: URL
-        
-        public init(host: URL? = nil) {
-            self.host = host ?? Defaults.apiHost
+public final class Client {
+
+    public static let defaultHost = URL(string: "http://127.0.0.1:8080/api")!
+
+    public let host: URL
+
+    internal(set) public var session: URLSession
+
+    public init(session: URLSession = URLSession(configuration: .default), host: URL? = nil) {
+        self.host = host ?? Self.defaultHost
+        self.session = session
+    }
+
+    public enum Error: Swift.Error, CustomStringConvertible {
+        case requestError(String)
+        case responseError(response: HTTPURLResponse, detail: String)
+        case decodingError(response: HTTPURLResponse, detail: String)
+        case unexpectedError(String)
+
+        public var description: String {
+            switch self {
+            case .requestError(let detail):
+                return "Request error: \(detail)"
+            case .responseError(let response, let detail):
+                return "Response error (Status \(response.statusCode)): \(detail)"
+            case .decodingError(let response, let detail):
+                return "Decoding error (Status \(response.statusCode)): \(detail)"
+            case .unexpectedError(let detail):
+                return "Unexpected error: \(detail)"
+            }
         }
     }
-    
-    public let configuration: Configuration
-    
-    public init(configuration: Configuration) {
-        self.configuration = configuration
+
+    private enum Method: String {
+        case post = "POST"
+        case get = "GET"
+        case delete = "DELETE"
     }
-    
-    // Generate
-    
-    public func generate(_ payload: GenerateRequest) async throws -> GenerateResponse {
-        var body = payload
-        body.stream = false
-        
-        var req = makeRequest(path: "generate", method: "POST")
-        req.httpBody = try JSONEncoder().encode(body)
-        
-        let (data, resp) = try await URLSession.shared.data(for: req)
-        if let httpResponse = resp as? HTTPURLResponse, httpResponse.statusCode != 200 {
-            throw URLError(.badServerResponse)
+
+    private struct ErrorResponse: Decodable {
+        let error: String
+    }
+}
+
+extension Client {
+
+    public func generateCompletions(_ request: GenerateRequest) async throws -> GenerateResponse {
+        guard request.stream == false else {
+            throw Error.requestError("ChatRequest.stream cannot be set to 'true'")
         }
-        return try decoder.decode(GenerateResponse.self, from: data)
+        return try await fetch(.post, "generate", body: request)
     }
-    
-    public func generateStream(_ payload: GenerateRequest) -> AsyncThrowingStream<GenerateResponse, Error> {
-        makeAsyncRequest(path: "generate", method: "POST", body: payload)
+
+    public func generateCompletionsStream(_ request: GenerateRequest) throws -> AsyncThrowingStream<GenerateResponse, Swift.Error> {
+        guard request.stream == true else {
+            throw Error.requestError("ChatRequest.stream must be set to 'true'")
+        }
+        return try fetchAsync(.post, "generate", body: request)
     }
-    
+
     // Chats
-    
-    public func chat(_ payload: ChatRequest) async throws -> ChatResponse {
-        var body = payload
-        body.stream = false
-        
-        var req = makeRequest(path: "chat", method: "POST")
-        req.httpBody = try JSONEncoder().encode(body)
-        
-        let (data, resp) = try await URLSession.shared.data(for: req)
-        if let httpResponse = resp as? HTTPURLResponse, httpResponse.statusCode != 200 {
-            throw URLError(.badServerResponse)
+
+    public func chatCompletions(_ request: ChatRequest) async throws -> ChatResponse {
+        guard request.stream == nil || request.stream == false else {
+            throw Error.requestError("ChatRequest.stream cannot be set to 'true'")
         }
-        return try decoder.decode(ChatResponse.self, from: data)
+        return try await fetch(.post, "chat", body: request)
     }
-    
-    public func chatStream(_ payload: ChatRequest) -> AsyncThrowingStream<ChatResponse, Error> {
-        makeAsyncRequest(path: "chat", method: "POST", body: payload)
-    }
-    
-    // Models
-    
-    public func models() async throws -> ModelListResponse {
-        let req = makeRequest(path: "tags", method: "GET")
-        let (data, resp) = try await URLSession.shared.data(for: req)
-        if let httpResponse = resp as? HTTPURLResponse, httpResponse.statusCode != 200 {
-            throw URLError(.badServerResponse)
+
+    public func chatCompletionsStream(_ request: ChatRequest) throws -> AsyncThrowingStream<ChatResponse, Swift.Error> {
+        guard request.stream == true else {
+            throw Error.requestError("ChatRequest.stream must be set to 'true'")
         }
-        return try decoder.decode(ModelListResponse.self, from: data)
+        return try fetchAsync(.post, "chat", body: request)
     }
-    
-    public func model(_ payload: ModelShowRequest) async throws -> ModelShowResponse {
-        var req = makeRequest(path: "show", method: "POST")
-        req.httpBody = try JSONEncoder().encode(payload)
-        
-        let (data, resp) = try await URLSession.shared.data(for: req)
-        if let httpResponse = resp as? HTTPURLResponse, httpResponse.statusCode != 200 {
-            throw URLError(.badServerResponse)
+}
+
+// MARK: - Models
+
+extension Client {
+
+    public func models() async throws -> ModelsResponse {
+        try await fetch(.get, "tags")
+    }
+
+    public func model(_ request: ModelShowRequest) async throws -> ModelShowResponse {
+        try await fetch(.post, "show", body: request)
+    }
+
+    public func modelCopy(_ request: ModelCopyRequest) async throws {
+        let resp: EmptyResponse = try await fetch(.post, "copy", body: request)
+    }
+
+    public func modelDelete(_ request: ModelDeleteRequest) async throws {
+        let resp: EmptyResponse = try await fetch(.delete, "delete", body: request)
+    }
+
+    public func modelPull(_ request: ModelPullRequest) throws -> AsyncThrowingStream<ProgressResponse, Swift.Error> {
+        guard request.stream == true else {
+            throw Error.requestError("ModelPullRequest.stream must be set to 'true'")
         }
-        return try decoder.decode(ModelShowResponse.self, from: data)
+        return try fetchAsync(.post, "pull", body: request)
     }
-    
-    public func modelCopy(_ payload: ModelCopyRequest) async throws {
-        var req = makeRequest(path: "copy", method: "POST")
-        req.httpBody = try JSONEncoder().encode(payload)
-        
-        let (_, resp) = try await URLSession.shared.data(for: req)
-        if let httpResponse = resp as? HTTPURLResponse, httpResponse.statusCode != 200 {
-            throw URLError(.badServerResponse)
+
+    public func modelPush(_ request: ModelPushRequest) throws -> AsyncThrowingStream<ProgressResponse, Swift.Error> {
+        guard request.stream == true else {
+            throw Error.requestError("ModelPullRequest.stream must be set to 'true'")
         }
-        return
+        return try fetchAsync(.post, "push", body: request)
     }
-    
-    public func modelDelete(_ payload: ModelDeleteRequest) async throws {
-        var req = makeRequest(path: "delete", method: "DELETE")
-        req.httpBody = try JSONEncoder().encode(payload)
-        
-        let (_, resp) = try await URLSession.shared.data(for: req)
-        if let httpResponse = resp as? HTTPURLResponse, httpResponse.statusCode != 200 {
-            throw URLError(.badServerResponse)
-        }
-        return
+}
+
+// MARK: - Embeddings
+
+extension Client {
+
+    public func embeddings(_ request: EmbeddingsRequest) async throws -> EmbeddingsResponse {
+        try await fetch(.post, "embeddings", body: request)
     }
-    
-    public func modelPull(_ payload: ModelPullRequest) -> AsyncThrowingStream<ProgressResponse, Error> {
-        var body = payload
-        body.stream = true
-        return makeAsyncRequest(path: "pull", method: "POST", body: body)
+}
+
+extension Client {
+
+    private func fetch<Response: Decodable>(_ method: Method, _ path: String, body: Encodable? = nil) async throws -> Response {
+        let request = try makeRequest(path: path, method: method, body: body)
+        let (data, resp) = try await session.data(for: request)
+        try checkResponse(resp, data)
+        return try decoder.decode(Response.self, from: data)
     }
-    
-    public func modelPush(_ payload: ModelPushRequest) -> AsyncThrowingStream<ProgressResponse, Error> {
-        var body = payload
-        body.stream = true
-        return makeAsyncRequest(path: "push", method: "POST", body: body)
-    }
-    
-    // Embeddings
-    
-    public func embeddings(_ payload: EmbeddingRequest) async throws -> EmbeddingResponse {
-        var req = makeRequest(path: "embeddings", method: "POST")
-        req.httpBody = try JSONEncoder().encode(payload)
-        
-        let (data, resp) = try await URLSession.shared.data(for: req)
-        if let httpResponse = resp as? HTTPURLResponse, httpResponse.statusCode != 200 {
-            throw URLError(.badServerResponse)
-        }
-        return try decoder.decode(EmbeddingResponse.self, from: data)
-    }
-    
-    // Private
-    
-    private func makeRequest(path: String, method: String) -> URLRequest {
-        var req = URLRequest(url: configuration.host.appending(path: path))
-        req.httpMethod = method
-        req.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        return req
-    }
-    
-    private func makeAsyncRequest<Body: Codable, Response: Codable>(path: String, method: String, body: Body) -> AsyncThrowingStream<Response, Error> {
-        var request = makeRequest(path: path, method: method)
-        request.httpBody = try? JSONEncoder().encode(body)
-        
+
+    private func fetchAsync<Response: Codable>(_ method: Method, _ path: String, body: Encodable) throws -> AsyncThrowingStream<Response, Swift.Error> {
+        let request = try makeRequest(path: path, method: method, body: body)
         return AsyncThrowingStream { continuation in
             let session = StreamingSession<Response>(urlRequest: request)
             session.onReceiveContent = {_, object in
@@ -153,10 +147,33 @@ public final class OllamaClient {
             session.perform()
         }
     }
-    
+
+    private func checkResponse(_ resp: URLResponse?, _ data: Data) throws {
+        if let response = resp as? HTTPURLResponse, response.statusCode != 200 {
+            if let err = try? decoder.decode(ErrorResponse.self, from: data) {
+                throw Error.responseError(response: response, detail: err.error)
+            } else {
+                throw Error.responseError(response: response, detail: "Unknown response error")
+            }
+        }
+    }
+
+    private func makeRequest(path: String, method: Method, body: Encodable? = nil) throws -> URLRequest {
+        var req = URLRequest(url: host.appending(path: path))
+        req.httpMethod = method.rawValue
+        req.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+
+        if let body {
+            req.httpBody = try JSONEncoder().encode(body)
+        }
+        return req
+    }
+
     private var decoder: JSONDecoder {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601WithFractionalSeconds
         return decoder
     }
 }
+
+private struct EmptyResponse: Decodable {}
