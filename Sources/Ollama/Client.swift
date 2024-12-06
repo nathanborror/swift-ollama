@@ -10,8 +10,8 @@ public final class Client {
     internal(set) public var session: URLSession
 
     public init(session: URLSession = URLSession(configuration: .default), host: URL? = nil) {
-        self.host = host ?? Self.defaultHost
         self.session = session
+        self.host = host ?? Self.defaultHost
     }
 
     public enum Error: Swift.Error, CustomStringConvertible {
