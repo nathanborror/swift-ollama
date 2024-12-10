@@ -45,6 +45,8 @@ public final class Client {
     }
 }
 
+// MARK: - Completions
+
 extension Client {
 
     public func generateCompletions(_ request: GenerateRequest) async throws -> GenerateResponse {
@@ -55,24 +57,28 @@ extension Client {
     }
 
     public func generateCompletionsStream(_ request: GenerateRequest) throws -> AsyncThrowingStream<GenerateResponse, Swift.Error> {
+        print(request.stream)
         guard request.stream == true else {
             throw Error.requestError("ChatRequest.stream must be set to 'true'")
         }
         return try fetchAsync(.post, "generate", body: request)
     }
+}
 
-    // Chats
+// MARK: - Chats
+
+extension Client {
 
     public func chatCompletions(_ request: ChatRequest) async throws -> ChatResponse {
-        guard request.stream == nil || request.stream == false else {
-            throw Error.requestError("ChatRequest.stream cannot be set to 'true'")
+        guard request.stream != nil || request.stream == true else {
+            throw Error.requestError("ChatRequest.stream must be set to 'false'")
         }
         return try await fetch(.post, "chat", body: request)
     }
 
     public func chatCompletionsStream(_ request: ChatRequest) throws -> AsyncThrowingStream<ChatResponse, Swift.Error> {
-        guard request.stream == true else {
-            throw Error.requestError("ChatRequest.stream must be set to 'true'")
+        guard request.stream == nil || request.stream == true else {
+            throw Error.requestError("ChatRequest.stream must be set to 'true' or nil")
         }
         return try fetchAsync(.post, "chat", body: request)
     }
@@ -91,11 +97,11 @@ extension Client {
     }
 
     public func modelCopy(_ request: ModelCopyRequest) async throws {
-        let resp: EmptyResponse = try await fetch(.post, "copy", body: request)
+        let _: EmptyResponse = try await fetch(.post, "copy", body: request)
     }
 
     public func modelDelete(_ request: ModelDeleteRequest) async throws {
-        let resp: EmptyResponse = try await fetch(.delete, "delete", body: request)
+        let _: EmptyResponse = try await fetch(.delete, "delete", body: request)
     }
 
     public func modelPull(_ request: ModelPullRequest) throws -> AsyncThrowingStream<ProgressResponse, Swift.Error> {
