@@ -15,7 +15,7 @@ let package = Package(
         .library(name: "Ollama", targets: ["Ollama"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/nathanborror/swift-shared-kit", branch: "main"),
+        .package(url: "https://github.com/nathanborror/swift-shared-kit", from: "1.0.0"),
     ],
     targets: [
         .target(name: "Ollama", dependencies: [
