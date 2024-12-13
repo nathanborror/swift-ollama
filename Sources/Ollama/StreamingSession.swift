@@ -60,7 +60,11 @@ final class StreamingSession<ResultType: Codable>: NSObject, Identifiable, URLSe
                 let object = try decoder.decode(ResultType.self, from: jsonData)
                 onReceiveContent?(self, object)
             } catch {
-                onProcessingError?(self, error)
+                if let decoded = try? decoder.decode(Client.ErrorResponse.self, from: jsonData) {
+                    onProcessingError?(self, decoded)
+                } else {
+                    onProcessingError?(self, error)
+                }
             }
         }
     }

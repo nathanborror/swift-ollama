@@ -40,8 +40,12 @@ public final class Client {
         case delete = "DELETE"
     }
 
-    private struct ErrorResponse: Decodable {
+    struct ErrorResponse: Swift.Error, CustomStringConvertible, Decodable {
         let error: String
+
+        public var description: String {
+            "\(error)"
+        }
     }
 }
 
