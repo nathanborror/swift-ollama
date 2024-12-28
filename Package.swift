@@ -16,10 +16,15 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/nathanborror/swift-shared-kit", branch: "main"),
+        .package(url: "https://github.com/apple/swift-argument-parser", branch: "main"),
     ],
     targets: [
         .target(name: "Ollama", dependencies: [
             .product(name: "SharedKit", package: "swift-shared-kit"),
+        ]),
+        .executableTarget(name: "OllamaCmd", dependencies: [
+            "Ollama",
+            .product(name: "ArgumentParser", package: "swift-argument-parser"),
         ]),
     ]
 )
