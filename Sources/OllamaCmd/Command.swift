@@ -1,7 +1,6 @@
 import Foundation
 import ArgumentParser
 import Ollama
-import SharedKit
 
 @main
 struct Command: AsyncParsableCommand {

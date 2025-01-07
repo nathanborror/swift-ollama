@@ -1,17 +1,17 @@
 import Foundation
-import SharedKit
+import JSON
 
 public struct ChatRequest: Codable {
     public var model: String
     public var messages: [Message]
     public var tools: [Tool]?
     public var format: String?
-    public var options: [String: AnyValue]?
+    public var options: [String: JSONValue]?
     public var stream: Bool?
     public var keep_alive: Bool?
 
     public init(model: String, messages: [Message], tools: [Tool]? = nil, format: String? = nil,
-                options: [String : AnyValue]? = nil, stream: Bool? = nil, keep_alive: Bool? = nil) {
+                options: [String : JSONValue]? = nil, stream: Bool? = nil, keep_alive: Bool? = nil) {
         self.model = model
         self.messages = messages
         self.tools = tools

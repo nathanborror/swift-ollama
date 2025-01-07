@@ -10,12 +10,12 @@
       }
     },
     {
-      "identity" : "swift-shared-kit",
+      "identity" : "swift-json",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nathanborror/swift-shared-kit",
+      "location" : "https://github.com/nathanborror/swift-json",
       "state" : {
         "branch" : "main",
-        "revision" : "2f2c55fabcdd81a1022e15c719a837cfe67ec530"
+        "revision" : "50e18f57a3e52bc2e4db280dbde8e8cc6793e94a"
       }
     }
   ],

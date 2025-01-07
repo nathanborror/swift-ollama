@@ -1,12 +1,12 @@
 import Foundation
-import SharedKit
+import JSON
 
 public struct GenerateRequest: Codable {
     public var model: String
     public var prompt: String
     public var suffix: String?
     public var format: String?
-    public var options: [String: AnyValue]?
+    public var options: [String: JSONValue]?
     public var system: String?
     public var template: String?
     public var context: [Int]?
@@ -29,7 +29,7 @@ public struct GenerateRequest: Codable {
     }
     
     public init(model: String, prompt: String, suffix: String? = nil, format: String? = nil,
-                options: [String : AnyValue]? = nil, system: String? = nil, template: String? = nil,
+                options: [String : JSONValue]? = nil, system: String? = nil, template: String? = nil,
                 context: [Int]? = nil, stream: Bool = true, raw: Bool? = nil, keepAlive: String? = nil) {
         self.model = model
         self.prompt = prompt

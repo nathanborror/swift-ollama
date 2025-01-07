@@ -1,5 +1,4 @@
 import Foundation
-import SharedKit
 
 public final class Client {
 

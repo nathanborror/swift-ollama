@@ -1,14 +1,14 @@
 import Foundation
-import SharedKit
+import JSON
 
 public struct EmbeddingsRequest: Codable {
     public var model: String
     public var input: String
     public var truncate: Bool?
-    public var options: [String: AnyValue]?
+    public var options: [String: JSONValue]?
     public var keep_alive: Bool?
 
-    public init(model: String, input: String, truncate: Bool? = nil, options: [String : AnyValue]? = nil,
+    public init(model: String, input: String, truncate: Bool? = nil, options: [String : JSONValue]? = nil,
                 keep_alive: Bool? = nil) {
         self.model = model
         self.input = input
