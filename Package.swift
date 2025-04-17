@@ -15,12 +15,12 @@ let package = Package(
         .library(name: "Ollama", targets: ["Ollama"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/nathanborror/swift-json", branch: "main"),
+        .package(url: "https://github.com/loopwork-ai/JSONSchema", branch: "main"),
         .package(url: "https://github.com/apple/swift-argument-parser", branch: "main"),
     ],
     targets: [
         .target(name: "Ollama", dependencies: [
-            .product(name: "JSON", package: "swift-json"),
+            .product(name: "JSONSchema", package: "JSONSchema"),
         ]),
         .executableTarget(name: "OllamaCmd", dependencies: [
             "Ollama",

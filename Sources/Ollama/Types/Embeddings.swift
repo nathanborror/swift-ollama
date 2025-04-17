@@ -1,5 +1,5 @@
 import Foundation
-import JSON
+import JSONSchema
 
 public struct EmbeddingsRequest: Codable {
     public var model: String

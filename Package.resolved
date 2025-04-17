@@ -1,21 +1,21 @@
 {
   "pins" : [
     {
+      "identity" : "jsonschema",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/loopwork-ai/JSONSchema",
+      "state" : {
+        "branch" : "main",
+        "revision" : "a60be45fa2ff42d342424f90a0859ee3e09aca2a"
+      }
+    },
+    {
       "identity" : "swift-argument-parser",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-argument-parser",
       "state" : {
         "branch" : "main",
         "revision" : "41d58ffe702cfe7b00b2c4c6a6611d9d25a0adc1"
-      }
-    },
-    {
-      "identity" : "swift-json",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nathanborror/swift-json",
-      "state" : {
-        "branch" : "main",
-        "revision" : "50e18f57a3e52bc2e4db280dbde8e8cc6793e94a"
       }
     }
   ],
