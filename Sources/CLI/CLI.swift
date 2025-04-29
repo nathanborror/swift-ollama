@@ -3,7 +3,7 @@ import ArgumentParser
 import Ollama
 
 @main
-struct Command: AsyncParsableCommand {
+struct CLI: AsyncParsableCommand {
 
     static var configuration = CommandConfiguration(
         abstract: "A utility for interacting with the Ollama API.",

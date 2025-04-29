@@ -22,9 +22,10 @@ let package = Package(
         .target(name: "Ollama", dependencies: [
             .product(name: "JSONSchema", package: "JSONSchema"),
         ]),
-        .executableTarget(name: "OllamaCmd", dependencies: [
+        .executableTarget(name: "CLI", dependencies: [
             "Ollama",
             .product(name: "ArgumentParser", package: "swift-argument-parser"),
         ]),
+        .testTarget(name: "OllamaTests", dependencies: ["Ollama"]),
     ]
 )

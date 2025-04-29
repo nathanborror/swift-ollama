@@ -98,10 +98,11 @@ public struct ToolCall: Codable {
             name = try container.decode(String.self, forKey: .name)
             
             // Decode arguments as a raw JSON string
-            if let jsonString = try? container.decodeRawJSON(forKey: .arguments) {
+            do {
+                let jsonString = try container.decodeRawJSON(forKey: .arguments)
                 arguments = jsonString
-            } else {
-                arguments = "{}" // Default empty JSON if decoding fails
+            } catch {
+                arguments = "{\"error\": \"\(error)\"}"
             }
         }
     }
