@@ -17,7 +17,10 @@ final class StreamingSession<ResultType: Codable>: NSObject, Identifiable, URLSe
     private let streamingCompletionMarker = "[DONE]"
     private let urlRequest: URLRequest
     private lazy var urlSession: URLSession = {
-        let session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
+        let configuration = URLSessionConfiguration.default
+        configuration.timeoutIntervalForRequest = 600 // 10 minute timeout
+        configuration.timeoutIntervalForResource = 600 // 10 minute timeout
+        let session = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
         return session
     }()
     
