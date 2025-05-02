@@ -8,9 +8,15 @@ public final class Client {
 
     internal(set) public var session: URLSession
 
+    private let encoder: JSONEncoder
+    private let decoder: JSONDecoder
+
     public init(session: URLSession = URLSession(configuration: .default), host: URL? = nil) {
         self.session = session
         self.host = host ?? Self.defaultHost
+        self.encoder = JSONEncoder()
+        self.decoder = JSONDecoder()
+        self.decoder.dateDecodingStrategy = .iso8601WithFractionalSeconds
     }
 
     public enum Error: Swift.Error, CustomStringConvertible {
@@ -173,15 +179,9 @@ extension Client {
         req.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
 
         if let body {
-            req.httpBody = try JSONEncoder().encode(body)
+            req.httpBody = try encoder.encode(body)
         }
         return req
-    }
-
-    private var decoder: JSONDecoder {
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601WithFractionalSeconds
-        return decoder
     }
 }
 
